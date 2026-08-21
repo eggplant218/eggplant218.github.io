@@ -1,0 +1,44 @@
+name: Deploy Eggplant Tarot
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download website package
+        uses: actions/checkout@v4
+
+      - name: Reassemble website
+        shell: bash
+        run: |
+          cat site-package.zip.part-* > site-package.zip
+          mkdir site
+          unzip -q site-package.zip -d site
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload website
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Publish
+        id: deployment
+        uses: actions/deploy-pages@v4
