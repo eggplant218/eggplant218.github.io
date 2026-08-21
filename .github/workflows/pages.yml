@@ -21,15 +21,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download website package
+      - name: Download website
         uses: actions/checkout@v4
-
-      - name: Reassemble website
-        shell: bash
-        run: |
-          cat site-package.zip.part-* > site-package.zip
-          mkdir site
-          unzip -q site-package.zip -d site
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -37,7 +30,7 @@ jobs:
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: .
 
       - name: Publish
         id: deployment
