@@ -24,6 +24,16 @@ jobs:
       - name: Download website
         uses: actions/checkout@v4
 
+      - name: Create lightweight mobile card images
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y webp
+          cwebp -quiet -q 68 -resize 420 0 card-back.png -o card-back.webp
+          for card in major-arcana/*.png; do
+            cwebp -quiet -q 68 -resize 420 0 "$card" -o "${card%.png}.webp"
+          done
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
